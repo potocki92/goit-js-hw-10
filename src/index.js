@@ -39,7 +39,7 @@ const handleSearch = debounce(() => {
       .catch(error => {
         Notiflix.Notify.failure('Oops, there is no country with that name.');
       });
-  }else {
+  } else {
     countryList.innerHTML = '';
   }
 }, DEBOUNCE_DELAY);
