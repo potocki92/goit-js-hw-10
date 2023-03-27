@@ -14,10 +14,31 @@ const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
 /*
+  This code adds an event listener to the 'countryList' element. 
+  When an item in the list is clicked, the code retrieves the 'id' of the clicked list item and passes it as a parameter to the 'fetchCountries' function. 
+  The returned data from 'fetchCountries' is then passed to the 'renderList' function to display the list of countries. 
+  If an error occurs during the process, the Notiflix library is used to display a failure notification.
+*/
+countryList.addEventListener('click', event => {
+  const clickedElement = event.target;
+  const listItem = clickedElement.closest('li');
+  if (listItem) {
+    const selectedCountry = listItem.id;
+    fetchCountries(selectedCountry)
+      .then(data => {
+        renderList(data);
+      })
+      .catch(error => {
+        Notiflix.Notify.failure('Oops, something went wrong.');
+      });
+  }
+});
+/*
 The handleSearch function is passed to the debounce function with a delay set to the value of DEBOUNCE_DELAY. 
 Inside this function, we retrieve the value of the search input field, check if it's not empty, and then call the fetchCountries function with the retrieved search term. 
 The handleSearch function is assigned to the keyup event of the searchInput element.
 */
+
 const handleSearch = debounce(() => {
   const searchTerm = searchInput.value.trim();
   if (searchTerm) {
@@ -60,6 +81,7 @@ const generateStyleString = styleKey => {
       'list-style': 'none',
       display: 'inline-flex',
       gap: '10px',
+      cursor: 'pointer',
     },
     img: {
       width: '35px',
@@ -101,7 +123,7 @@ const renderList = data => {
   const markup = data
     .map(
       ({ name: { common }, flags }) => `
-        <li style="${generateStyleString('li')}">
+        <li id="${common}" style="${generateStyleString('li')}">
           <img src="${
             flags[0]
           }" alt="${common} flag" style="${generateStyleString('img')}">
@@ -143,6 +165,7 @@ const renderList = data => {
 </ul>`;
   }
 };
+
 /*
     event listener is added to the searchInput element, which listens for changes to the input field and invokes the handleSearch function with a delay using the debounce function.
 */
